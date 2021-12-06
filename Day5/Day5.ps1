@@ -20,10 +20,10 @@ $cords = $data | % {
          else {0} 
     ) 
     [PSCustomObject]@{
-        x1       = $x1
-        y1       = $y1
-        x2       = $x2
-        y2       = $y2
+        x1       = [int32]$x1
+        y1       = [int32]$y1
+        x2       = [int32]$x2
+        y2       = [int32]$y2
         matching = $(
             if ($x1 -eq $x2) { 'X' } 
             elseif ($y1 -eq $y2) { 'Y' } 
@@ -52,59 +52,78 @@ function set-cordinates ($cordinate,[switch]$diag) {
             
             switch ($cordinate) {
                 {$cordinate.x1 -gt $cordinate.x2 -and $cordinate.y1 -gt $cordinate.y2} {
-                    #going north east
-                    write-verbose "going north east"
+                    #going up right
+                    write-verbose "going up right"
                     [int32]$x1 = $cordinate.x1
                     [int32]$y1 = $cordinate.y1
                     write-verbose "Start point [$x1,$y1]"
-                        while ($x1 -ne $cordinate.x2) { #-or $y1 -ge $cordinate.y2) {
-                            write-verbose "set point [$x1,$y1]"
+                        #while ($x1 -ge $cordinate.x2 -or $y1 -ge $cordinate.y2) {
+                        while (($x1 -ne $cordinate.x2) -or ($y1 -ne $cordinate.y2)) {
+                            
                             $script:griddiag["$x1,$y1"]++
                             $x1--
                             $y1--
                         }
+                        write-verbose "last set point [$x1,$y1]"
+                        write-verbose "End point [$($cordinate.x2),$($cordinate.y2)]"
                         break
                  }
                 {$cordinate.x1 -gt $cordinate.x2 -and $cordinate.y1 -lt $cordinate.y2} {
-                    #going south east
-                    write-verbose "going south east"
+                    #going down right
+
+                    # x1       : 35
+                    # y1       : 341
+                    # x2       : 321
+                    # y2       : 627
+                    # matching : D
+                    # angle    : 45
+                    write-verbose "going down right"
                     [int32]$x1 = $cordinate.x1
                     [int32]$y1 = $cordinate.y1
                     write-verbose "Start point [$x1,$y1]"
-                        while ($x1 -ge $cordinate.x2 -or $y1 -le $cordinate.y2) {
-                            write-verbose "set point [$x1,$y1]"
+                        #while ($x1 -ge $cordinate.x2 -or $y1 -le $cordinate.y2) {
+                            while (($x1 -ne $cordinate.x2) -or ($y1 -ne $cordinate.y2)) {
+                            #write-verbose "set point [$x1,$y1]"
                             $script:griddiag["$x1,$y1"]++
                             $x1--
                             $y1++
                         }
+                        write-verbose "last set point [$x1,$y1]"
+                        write-verbose "End point [$($cordinate.x2),$($cordinate.y2)]"
                         break
                 }
                 {$cordinate.x1 -lt $cordinate.x2 -and $cordinate.y1 -gt $cordinate.y2} {
-                     #going north west
-                     write-verbose "going north west"
+                     #going up left
+                     write-verbose "going up left"
                      [int32]$x1 = $cordinate.x1
                      [int32]$y1 = $cordinate.y1
                      write-verbose "Start point [$x1,$y1]"
-                         while ($x1 -le $cordinate.x2 -or $y1 -ge $cordinate.y2) {
-                            write-verbose "set point [$x1,$y1]"
+                        # while ($x1 -le $cordinate.x2 -or $y1 -ge $cordinate.y2) {
+                        while (($x1 -ne $cordinate.x2) -or ($y1 -ne $cordinate.y2)) {
+                            #write-verbose "set point [$x1,$y1]"
                              $script:griddiag["$x1,$y1"]++
                              $x1++
                              $y1--
                          }
+                         write-verbose "last set point [$x1,$y1]"
+                         write-verbose "End point [$($cordinate.x2),$($cordinate.y2)]"
                          break
                 }
                 {$cordinate.x1 -lt $cordinate.x2 -and $cordinate.y1 -lt $cordinate.y2} {
-                    #going south west
-                    write-verbose "going south west"
+                    #going down left
+                    write-verbose "going down left"
                     [int32]$x1 = $cordinate.x1
                     [int32]$y1 = $cordinate.y1
-                    write-verbose "Start point [$x1,$y1]"
-                        while ($x1 -le $cordinate.x2 -or $y1 -le $cordinate.y2) {
+                    #write-verbose "Start point [$x1,$y1]"
+                        #while ($x1 -le $cordinate.x2 -or $y1 -le $cordinate.y2) {
+                            while (($x1 -ne $cordinate.x2) -or ($y1 -ne $cordinate.y2)) {
                             write-verbose "set point [$x1,$y1]"
                             $script:griddiag["$x1,$y1"]++
                             $x1++
                             $y1++
                         }
+                        write-verbose "last set point [$x1,$y1]"
+                        write-verbose "End point [$($cordinate.x2),$($cordinate.y2)]"
                         break
                 }
                 Default {}
