@@ -1,7 +1,7 @@
 $data = get-content .\Day7\Input7.txt
 $data = $data -split ',' -as [int32[]]
 
-$data= '16,1,2,0,4,2,7,1,2,14' -split ',' -as [int32[]]
+#$data= '16,1,2,0,4,2,7,1,2,14' -split ',' -as [int32[]]
 $min, $max = $data | sort | select -first 1 -last 1
 
 
@@ -64,11 +64,11 @@ $calc = for ($i = $min; $i -lt $max; $i++) {
     }
 
 }
-
+ 
 $part2 = find-path -position $data.clone() -min $min -max $max
 #(11*(1+11))/2
 [PSCustomObject]@{
     part1 = ($calc | sort -property steps| select -first 1).steps
     part2 = ($part2 | sort -Property steps|select -first 1).steps
 }
-$part2 | ogv
+
