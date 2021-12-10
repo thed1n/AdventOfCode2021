@@ -75,6 +75,6 @@ function get-fishyfishy {
 
 
 [PSCustomObject]@{
-    part1 = $part1.Sum
-    part2 = get-fishyfishy $fish -days 256
+    part1 = get-fishyfishy $fish.clone() -days 80
+    part2 = get-fishyfishy $fish.clone() -days 256
 }
