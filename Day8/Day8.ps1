@@ -1,7 +1,7 @@
 $data = get-content .\Day8\Input8.txt
 $data = get-content .\Day8\test8.txt
 
-$data
+$data = $data.trim()
 
 <#
  0:      1:      2:      3:      4:
@@ -35,3 +35,27 @@ b    .  b    .  .    c  b    c  b    c
      8 = 7 #unik
      9 = 6 
  }
+
+ [int32]$count = 0
+
+ $data[0] | % {
+ $idata,$resultdata = $_.split('|')
+ 
+ $idata = $idata.trim() -split ' ' | % {($_.tochararray() | sort) -join ''}
+ $resultdata = $resultdata.trim() -split ' ' | % {($_.tochararray() | sort) -join ''}
+
+ $idata | % {
+    $size = $_.length
+    $value = ($_.tochararray() | sort) -join ''
+     if ($segements.ContainsValue($size)) {
+        $resultdata | % {
+            $rval = ($_.tochararray() | sort) -join ''
+            if ($rval -eq $value) {$count++}
+            
+            #if ($_.length -eq $size) {$count++}
+         }
+     }
+ }
+ }
+
+ $count
