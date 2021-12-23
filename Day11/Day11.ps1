@@ -1,9 +1,10 @@
 $data = get-content .\Day11\Input11.txt
 
-$data = get-content .\Day11\test11.txt
+#$data = get-content .\Day11\test11.txt
 
+<#
 function new-octoblink ([int32]$y,[int32]$x,$direction) {
-    
+    #Full line not just neighbour
     write-verbose "$y,$x"
     if ($x -lt 0 -or $x -ge $grid[0].count) {return}
     if ($y -lt 0 -or $y -ge $grid.count) {return}
@@ -14,7 +15,7 @@ function new-octoblink ([int32]$y,[int32]$x,$direction) {
     if ($grid[$y][$x] -lt 9) {
         $script:grid[$y][$x]++
 
-        if ($script:grid[$y][$x] -eq 9) {
+        if ($script:grid[$y][$x] -gt 9) {
             new-octoblink $y $x
         }
     }
@@ -45,7 +46,7 @@ function new-octoblink ([int32]$y,[int32]$x,$direction) {
 
 
 }
-
+#>
 function new-octoblink ([int32]$y,[int32]$x,$direction) {
     
     write-verbose "$y,$x"
@@ -55,10 +56,10 @@ function new-octoblink ([int32]$y,[int32]$x,$direction) {
 
     #check up, down, left, rigth
     
-    if ($grid[$y][$x] -lt 9) {
+    if ($grid[$y][$x] -le 9) {
         $script:grid[$y][$x]++
 
-        if ($script:grid[$y][$x] -ge 9) {
+        if ($script:grid[$y][$x] -gt 9) {
             new-octoblink $y $x
         }
     }
@@ -90,12 +91,16 @@ function new-octoblink ([int32]$y,[int32]$x,$direction) {
 
 }
 function draw-octo () {
+    clear-host
     foreach ($g in $grid) {
 
         foreach ($c in $g) {
         
-        if ($c -eq 9) {
+        if ($c -ge 9) {
         write-host "$c" -NoNewline -ForegroundColor Yellow
+        }
+        elseif ($c -eq 0) {
+            write-host "$c" -NoNewline -ForegroundColor red
         }
         else {
         write-host "$c" -NoNewline
@@ -120,17 +125,21 @@ function increase-energy () {
 }
 
 function reset-energy () {
+
+    $numFlash = 0
     for ($y = 0; $y -lt $script:grid.Count; $y++) {
 
         for ($x = 0; $x -lt $script:grid[$y].Count; $x++) {
             
-            if ($script:grid[$y][$x] -ge 9) {
+            if ($script:grid[$y][$x] -gt 9) {
                 $script:grid[$y][$x] = 0
                 $script:flashes++
+                $numFlash++
             }
         }
         
     }
+        return $numFlash
 }
 
 function get-blinkers () {
@@ -138,7 +147,7 @@ function get-blinkers () {
 
         for ($x = 0; $x -lt $script:grid[$y].Count; $x++) {
             
-            if ($script:grid[$y][$x] -ge 9) {
+            if ($script:grid[$y][$x] -gt 9) {
                 [PSCustomObject]@{
                     y = $y
                     x = $x
@@ -158,7 +167,6 @@ $grid = [int32[][]]::new($($data.count),$($data[0].Length))
 for ($i=0;$i -lt $data.count;$i++) {
 
     $x = 0
-    #$data[$i].tochararray() | % {
         $data[$i] -split '' | ? {$false -eq [string]::IsNullOrWhiteSpace($_)}  | % {
 
         $grid[$i][$x]= $_
@@ -168,31 +176,27 @@ for ($i=0;$i -lt $data.count;$i++) {
 
 $flashes = 0
 
-
-for ($i=0;$i -lt 10;$i++) {
-draw-octo
+#draw-octo
+for ($i=0;$i -lt 100000;$i++) {
+#draw-octo
 
 increase-energy
 $blinkers = get-blinkers 
 $blinkers | % {
     new-octoblink ($_.y) ($_.x)
 }
+$result = reset-energy
 #draw-octo
-reset-energy
+
+if ($result -eq 100) {
+    break
+}
+if ($i -eq 99) {
+    $part1 = $flashes
+}
 }
 
 [PSCustomObject]@{
-    part1 = $flashes
+    part1 = $part1
+    part2 = $i+1
 }
-<#
-First, the energy level of each octopus increases by 1.
-
-Then, any octopus with an energy level greater than 9 flashes.
-This increases the energy level of all adjacent octopuses by 1, 
-including octopuses that are diagonally adjacent. 
-If this causes an octopus to have an energy level greater than 9, it also flashes. 
-This process continues as long as new octopuses keep having their energy level increased beyond 9. 
-(An octopus can only flash at most once per step.)
-
-Finally, any octopus that flashed during this step has its energy level set to 0, as it used all of its energy to flash.
-#>
