@@ -45,7 +45,15 @@ function draw-grid () {
     }
 }
 
-function fold-grid () {
+function fold-grid ($f) {
+    $dir = ''
+    switch ($f.fold) {
+        'y' {$dir = 'left'}
+        'x' {$dir = 'up'}
+    }
+    
+    s
+
 
 }
 $initialdots | % {
@@ -54,4 +62,6 @@ $initialdots | % {
 
 draw-grid
 
-$foldvectors
+$foldvectors | % {
+    fold-grid $_
+}
